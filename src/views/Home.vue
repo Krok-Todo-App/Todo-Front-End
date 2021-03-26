@@ -1,6 +1,6 @@
 <template>
   <v-header/>
-  <v-task-list></v-task-list>
+  <v-task-list/>
 </template>
 
 <script>
