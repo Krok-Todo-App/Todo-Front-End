@@ -1,80 +1,13 @@
 <template>
   <section class="spacer">
     <v-container>
-      <div class="task-list">
-        <div class="task">
-          <div class="task__top">
-            <div class="task__top-wrapper">
-              <div class="task__checkbox">
-                <label for="check">
-                  <input type="checkbox" id="check">
-                </label>
-              </div>
-              <div class="task__title">
-                Completion and design approval
-              </div>
-            </div>
-            <div class="task__remove">
-              <img src="../assets/images/svg/trash.svg" alt="trash">
-            </div>
-          </div>
-          <div class="task__bottom hidden">
-            <div class="task__description">
-              Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-              industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
-              scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into
-              electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release
-              of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software
-              like Aldus PageMaker including versions of Lorem Ipsum.
-            </div>
-            <div class="task__date">
-              <div class="task__date-due">
-                Due date:
-              </div>
-              <div class="task__date-from">
-                12 Feb — 13 March
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="task">
-          <div class="task__top">
-            <div class="task__top-wrapper">
-              <div class="task__checkbox">
-                <label for="check1">
-                  <input type="checkbox" id="check1">
-                </label>
-              </div>
-              <div class="task__title">
-                Completion and design approval
-              </div>
-            </div>
-            <div class="task__remove">
-              <img src="../assets/images/svg/trash.svg" alt="trash">
-            </div>
-          </div>
-          <div class="task__bottom hidden">
-            <div class="task__description">
-              Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-              industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
-              scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into
-              electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release
-              of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software
-              like Aldus PageMaker including versions of Lorem Ipsum.
-            </div>
-            <div class="task__date">
-              <div class="task__date-due">
-                Due date:
-              </div>
-              <div class="task__date-from">
-                12 Feb — 13 March
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="task">
-          <input class="task__last" placeholder="Add task..."/>
-        </div>
+      <div class="task-list spacer">
+        <v-task v-for="item in todos" :item="item" :key="item.id" :removeTodo="removeTodo"/>
+        <form class="controls" @submit.prevent="createTask">
+          <label>
+            <input class="controls__control" v-model="title" placeholder="Add title..."/>
+          </label>
+        </form>
       </div>
     </v-container>
   </section>
@@ -82,97 +15,85 @@
 
 <script>
 import vContainer from "@/components/Container"
+import vTask from "@/components/Task"
+import {uuid} from 'vue-uuid'
 
 export default {
   name: "TaskList",
   components: {
-    vContainer
-  }
+    vContainer,
+    vTask,
+  },
+  data: () => ({
+    date: new Date(),
+    todos: [
+      {
+        id: 1,
+        title: "Completion and design approval",
+        description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+        dateFrom: "12 Feb",
+        dateTo: "13 March",
+      },
+      {
+        id: 2,
+        title: "Why do we use it?",
+        description: "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
+        dateFrom: "11 Feb",
+        dateTo: "12 Feb",
+      }
+    ],
+    title: "",
+    description: "",
+    dateFrom: "",
+    dateTo: "",
+  }),
+  methods: {
+    createTask() {
+      if (this.title.length) {
+        this.todos.push({
+          id: uuid.v4(),
+          title: this.title,
+          description: this.description,
+          dateFrom: this.dateFrom,
+          dateTo: this.dateTo
+        })
+        this.title = ""
+        this.description = ""
+        this.dateFrom = ""
+        this.dateTo = ""
+      }
+    },
+    removeTodo(idx) {
+      this.todos = this.todos.filter(item => item.id !== idx)
+    }
+  },
+
 }
 </script>
 
-<style lang="scss" scoped>
-.container {
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-// Task
-
-.hidden {
-  position: absolute;
-  visibility: hidden;
-}
-
-.task {
-  padding: 15px 30px;
+<style scoped lang="scss">
+.controls {
   border-top: 1px solid #EDEDED;
 }
 
-.task__top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.task-list {
+  margin-bottom: 60px;
 }
 
-.task__top-wrapper {
-  display: flex;
-  align-items: center;
-}
-
-.task__title {
-  margin-left: 10px;
-  font-size: 18px;
-  line-height: 120%;
-  color: #1A2C3C;
-}
-
-.task__checkbox {
-  label {
-    width: 15px;
-    height: 15px;
-    background: #FFFFFF;
-    border: 1px solid #626262;
-    box-sizing: border-box;
-    border-radius: 28px;
-    display: block;
-  }
-
-  input {
-    display: none;
-  }
-}
-
-.task__description {
-  margin-top: 15px;
-  margin-left: 27px;
-  line-height: 140%;
-  font-size: 16px;
-}
-
-.task__date {
-  margin-left: 27px;
-  margin-top: 15px;
-  display: flex;
-  font-size: 16px;
-  align-items: center;
-}
-
-.task__date-due {
-  color: #1A2C3B;
-  margin-right: 15px;
-}
-
-.task__last {
-  margin-left: 27px;
-}
-
-.task__last {
+.controls__control {
+  padding: 15px 30px;
   background: transparent;
   font-size: 18px;
   outline: none;
   width: 100%;
   display: block;
   border: none;
+  line-height: 120%;
+  color: #1A2C3C;
+  margin-left: 23px;
+
+  &::placeholder {
+    color: #8E8E8E;
+  }
 }
 </style>
