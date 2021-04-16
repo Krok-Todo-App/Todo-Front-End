@@ -1,25 +1,41 @@
 <template>
   <div class="task">
-    <div class="task__top" @click="toggleHidden">
+    <div class="task__top">
       <div class="task__top-wrapper">
         <div class="task__checkbox">
-          <label :for="`check_${item.id}`">
-            <input type="checkbox" :id="`check_${item.id}`">
-          </label>
+          <input :id="`id__${item.id}`"
+                 class="custom-checkbox"
+                 type="checkbox"
+                 @click="updateTodo({...item, completed: !item.completed})"
+                 :checked="item.completed"/>
+          <label :for="`id__${item.id}`"></label>
         </div>
-        <div class="task__title">
-          {{ item.title }}
-        </div>
+
+        <label>
+          <input v-model="item.taskName"
+                 @change="updateTodo({...item, title: item.taskName})"
+                 class="task__title"
+                 :disabled="item.completed"
+                 :class="{'completed': item.completed}"/>
+        </label>
       </div>
-      <div class="task__remove" @click="removeTodo(item.id)">
-        <img src="../assets/images/svg/trash.svg" alt="trash">
+      <div class="task__buttons">
+        <div class="task__remove" @click="removeTodo(item.id)">
+          <img src="../assets/images/svg/trash.svg" alt="trash">
+        </div>
+        <div class="task__open" @click="toggleHidden" :class="{'open--arrow': hidden}">
+          <img src="../assets/images/svg/arrow-down.svg" alt="open">
+        </div>
       </div>
     </div>
-<!--    :class="{'task&#45;&#45;hidden': hidden}"-->
-    <div class="task__bottom" >
+    <div class="task__bottom" :class="{'task--hidden': hidden}">
       <label>
-        <textarea class="task__description" rows="5">
-          {{ item.description }}
+        <textarea v-model="item.taskDescription"
+                  @change="updateTodo({...item, description: item.taskDescription})"
+                  class="task__description"
+                  rows="5"
+                  :disabled="item.completed">
+          {{ item.taskDescription }}
         </textarea>
       </label>
       <div class="task__date">
@@ -27,7 +43,7 @@
           Due date:
         </div>
         <div class="task__date-from">
-          {{ item.dateFrom }} — {{ item.dateTo }}
+          {{ createData }} — {{ dueDate }}
         </div>
       </div>
     </div>
@@ -36,13 +52,24 @@
 </template>
 
 <script>
+import {mapActions} from "vuex";
+
 export default {
   name: "Task",
   props: ["item", "removeTodo"],
   data: () => ({
     hidden: true
   }),
+  computed: {
+    createData() {
+      return new Date(this.item.createDate).toLocaleDateString()
+    },
+    dueDate() {
+      return new Date(this.item.dueDate).toLocaleDateString()
+    },
+  },
   methods: {
+    ...mapActions(["updateTodo"]),
     toggleHidden() {
       this.hidden = !this.hidden
     }
@@ -58,6 +85,14 @@ export default {
   width: 0;
 }
 
+.completed {
+  text-decoration: line-through;
+}
+
+.arrow--open {
+  transform: rotate(90deg);
+}
+
 .task {
   border-top: 1px solid #EDEDED;
 }
@@ -70,7 +105,7 @@ export default {
 }
 
 .task__bottom {
-  padding: 0 30px 15px 30px;
+  margin: 0 30px 15px 30px;
 }
 
 .task__top-wrapper {
@@ -79,38 +114,71 @@ export default {
 }
 
 .task__title {
+  width: 300px;
   margin-left: 10px;
   font-size: 18px;
   line-height: 120%;
   color: #1A2C3C;
+  background: transparent;
+  outline: none;
+  border: none;
+
+  &::placeholder {
+    color: #1A2C3C;
+  }
 }
 
 .task__checkbox {
-  label {
-    width: 15px;
-    height: 15px;
-    background: #FFFFFF;
-    border: 1px solid #626262;
-    box-sizing: border-box;
-    border-radius: 28px;
-    display: block;
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-  input {
-    display: none;
-  }
+.custom-checkbox {
+  position: absolute;
+  z-index: -1;
+  opacity: 0;
+}
+
+.custom-checkbox + label {
+  display: inline-flex;
+  align-items: center;
+  user-select: none;
+}
+
+.custom-checkbox + label::before {
+  content: '';
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  flex-grow: 0;
+  border: 1px solid #626262;
+  border-radius: 118px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 50% 50%;
+}
+
+.custom-checkbox:checked + label::before {
+  border-color: transparent;
+  background-color: #62B620;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z'/%3e%3c/svg%3e");
 }
 
 .task__description {
-  margin-left: 25px;
   line-height: 140%;
   font-size: 16px;
   width: 100%;
-  border: 1px solid #7E7E7E;
-  box-sizing: border-box;
+  border: 1px solid #EDEDED;
   border-radius: 5px;
-  padding: 5px 15px;
+  padding: 15px 26px;
   resize: none;
+
+  &:focus {
+    outline: none;
+    border-color: #1A2C3C;
+  }
 }
 
 .task__date {
@@ -127,7 +195,18 @@ export default {
 }
 
 .task__remove {
-  cursor: pointer;
+  margin-right: 10px;
+}
+
+.task__buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  img {
+    display: block;
+    cursor: pointer;
+  }
 }
 
 
