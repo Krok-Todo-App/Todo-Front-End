@@ -3,6 +3,9 @@
 </template>
 
 <style>
+* {
+  box-sizing: border-box;
+}
 body {
   font-family: "Acrom", sans-serif;
   font-weight: 400;
