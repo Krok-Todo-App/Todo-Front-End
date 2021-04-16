@@ -2,7 +2,7 @@
   <section class="spacer">
     <v-container>
       <div class="task-list spacer">
-        <v-task v-for="item in todos" :item="item" :key="item.id" :removeTodo="removeTodo"/>
+        <v-task v-for="item in getTodos" :item="item" :key="item.id" :removeTodo="removeTodo"/>
         <form class="controls" @submit.prevent="createTask">
           <label>
             <input class="controls__control" v-model="title" placeholder="Add title..."/>
@@ -17,6 +17,7 @@
 import vContainer from "@/components/Container"
 import vTask from "@/components/Task"
 import {uuid} from 'vue-uuid'
+import {mapActions, mapGetters} from "vuex";
 
 export default {
   name: "TaskList",
@@ -25,37 +26,22 @@ export default {
     vTask,
   },
   data: () => ({
-    date: new Date(),
-    todos: [
-      {
-        id: 1,
-        title: "Completion and design approval",
-        description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-        dateFrom: "12 Feb",
-        dateTo: "13 March",
-      },
-      {
-        id: 2,
-        title: "Why do we use it?",
-        description: "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
-        dateFrom: "11 Feb",
-        dateTo: "12 Feb",
-      }
-    ],
-    title: "",
-    description: "",
-    dateFrom: "",
-    dateTo: "",
+    title: ""
   }),
+  computed: {
+    ...mapGetters(['getTodos'])
+  },
   methods: {
+    ...mapActions(["fetchTodos", "removeTodo", "createTodo"]),
     createTask() {
       if (this.title.length) {
-        this.todos.push({
+        this.createTodo({
           id: uuid.v4(),
           title: this.title,
-          description: this.description,
-          dateFrom: this.dateFrom,
-          dateTo: this.dateTo
+          description: "",
+          dateFrom: "",
+          dateTo: "",
+          completed: false
         })
         this.title = ""
         this.description = ""
@@ -63,11 +49,10 @@ export default {
         this.dateTo = ""
       }
     },
-    removeTodo(idx) {
-      this.todos = this.todos.filter(item => item.id !== idx)
-    }
   },
-
+  mounted() {
+    this.fetchTodos()
+  }
 }
 </script>
 
