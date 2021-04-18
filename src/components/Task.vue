@@ -44,6 +44,7 @@
         <div class="task__date-from">
           {{ formattedCreateData }} — {{ formattedDueDate }}
         </div>
+
       </div>
     </div>
   </div>
@@ -52,7 +53,6 @@
 
 <script>
 import {mapActions} from "vuex";
-
 export default {
   name: "Task",
   props: ["item", "removeTodo"],
