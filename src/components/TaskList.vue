@@ -36,17 +36,11 @@ export default {
     createTask() {
       if (this.title.length) {
         this.createTodo({
-          id: uuid.v4(),
-          title: this.title,
-          description: "",
-          dateFrom: "",
-          dateTo: "",
+          taskName: this.title,
+          taskDescription: "",
           completed: false
         })
         this.title = ""
-        this.description = ""
-        this.dateFrom = ""
-        this.dateTo = ""
       }
     },
   },
