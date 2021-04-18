@@ -24,9 +24,9 @@ export default {
         }
     },
     async updateTodo(item) {
-        const res = await axios.put(`${BASE_URL}/api/tasks`, item)
-        if (res.status === RESPONSE_STATUS_OK_200) {
-            return res.data
+        const response = await axios.put(`${BASE_URL}/api/tasks`, item)
+        if (response.status === RESPONSE_STATUS_OK_200) {
+            return response.data
         }
     }
 }
