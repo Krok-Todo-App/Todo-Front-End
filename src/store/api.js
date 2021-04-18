@@ -1,41 +1,32 @@
-const RESPONSE_STATUS_200 = 200
-const RESPONSE_STATUS_201 = 201
+const axios = require("axios")
+const RESPONSE_STATUS_OK_200 = 200
+const RESPONSE_STATUS_CREATED_201 = 201
+const RESPONSE_STATUS_NO_CONTENT_204 = 204
+const RESPONSE_STATUS_FORBIDDEN_401 = 401
+const RESPONSE_STATUS_FORBIDDEN_403 = 403
+const BASE_URL = "https://todotaskapi.edvard-potapenko.dev"
 
 export default {
     async fetchTodos() {
-        const response = await fetch("https://todotaskapi.edvard-potapenko.dev/api/tasks/")
-        if (response.status === RESPONSE_STATUS_200) {
-            return await response.json()
+        const response = await axios.get(`${BASE_URL}/api/tasks`)
+        if (response.status === RESPONSE_STATUS_OK_200) {
+            return await response.data
         }
     },
     async removeTodo(idx) {
-        const response = await fetch(`http://localhost:3000/todos/${idx}`, {
-            method: "DELETE"
-        })
-        return response.status === RESPONSE_STATUS_200
+        const response = await axios.delete(`${BASE_URL}/api/tasks/${idx}`)
+        return response.status === RESPONSE_STATUS_NO_CONTENT_204
     },
     async createTodo(item) {
-        const response = await fetch('http://localhost:3000/todos/', {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(item)
-        })
-        if (response.status === RESPONSE_STATUS_201) {
-            return item
+        const response = await axios.post(`${BASE_URL}/api/tasks`, item)
+        if (response.status === RESPONSE_STATUS_CREATED_201) {
+            return await response.data
         }
     },
     async updateTodo(item) {
-        const response = await fetch(`http://localhost:3000/todos/${item.id}`, {
-            method: "PUT",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(item)
-        })
-        if (response.status === RESPONSE_STATUS_200) {
-            return true
+        const res = await axios.put(`${BASE_URL}/api/tasks`, item)
+        if (res.status === RESPONSE_STATUS_OK_200) {
+            return res.data
         }
     }
 }
