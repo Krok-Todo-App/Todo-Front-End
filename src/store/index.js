@@ -15,13 +15,9 @@ export default createStore({
         REMOVE_TODO(state, idx) {
             state.todos = state.todos.filter(item => item.id !== idx)
         },
-        UPDATE_TODO(state, {idx, itemUpdate}) {
-            const updateTodo = state.todos.find(item => item.id === idx)
-            for (let field in itemUpdate) {
-                if (updateTodo.hasOwnProperty(field)) {
-                    updateTodo[field] = itemUpdate[field]
-                }
-            }
+        UPDATE_TODO(state, itemTodo) {
+            const updateTodo = state.todos.find(item => itemTodo.id === item.id)
+            state.todos[updateTodo] = itemTodo
         }
     },
     getters: {
@@ -41,18 +37,17 @@ export default createStore({
             }
         },
         async createTodo({commit, dispatch}, item) {
-            const resp = await api.createTodo(item)
-            if (resp) {
-                await commit("CREATE_TODO", item)
+            const data = await api.createTodo(item)
+            if (data) {
+                await commit("CREATE_TODO", data)
             }
         },
         async updateTodo({commit}, item) {
-            const resp = await api.updateTodo(item)
-            if (resp) {
-                await commit("UPDATE_TODO", {idx: item.id, itemUpdate: item})
+            const data = await api.updateTodo(item)
+            if (data) {
+                await commit("UPDATE_TODO", item)
             }
         }
-
     },
     modules: {}
 })
