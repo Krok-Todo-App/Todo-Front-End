@@ -7,13 +7,12 @@
                  class="custom-checkbox"
                  type="checkbox"
                  @click="updateTodo({...item, completed: !item.completed})"
-                 :checked="item.completed"/>
+                 v-model="item.completed"/>
           <label :for="`id__${item.id}`"></label>
         </div>
-
         <label>
           <input v-model="item.taskName"
-                 @change="updateTodo({...item, title: item.taskName})"
+                 @change="updateTodo({...item, taskName: item.taskName})"
                  class="task__title"
                  :disabled="item.completed"
                  :class="{'completed': item.completed}"/>
@@ -31,7 +30,7 @@
     <div class="task__bottom" :class="{'task--hidden': hidden}">
       <label>
         <textarea v-model="item.taskDescription"
-                  @change="updateTodo({...item, description: item.taskDescription})"
+                  @change="updateTodo({...item, taskDescription: item.taskDescription})"
                   class="task__description"
                   rows="5"
                   :disabled="item.completed">
@@ -43,7 +42,7 @@
           Due date:
         </div>
         <div class="task__date-from">
-          {{ createData }} — {{ dueDate }}
+          {{ formattedCreateData }} — {{ formattedDueDate }}
         </div>
       </div>
     </div>
@@ -58,13 +57,20 @@ export default {
   name: "Task",
   props: ["item", "removeTodo"],
   data: () => ({
-    hidden: true
+    hidden: true,
+    create: new Date()
   }),
   computed: {
-    createData() {
+    formattedCreateData() {
+      if(!this.item.createDate) {
+        return "Не задано"
+      }
       return new Date(this.item.createDate).toLocaleDateString()
     },
-    dueDate() {
+    formattedDueDate() {
+      if(!this.item.dueDate) {
+        return "Не задано"
+      }
       return new Date(this.item.dueDate).toLocaleDateString()
     },
   },
