@@ -24,10 +24,11 @@ export default {
     password: ""
   }),
   methods: {
-    register(){
+    async register(){
         if(this.name.length && this.email.length && this.password.length) {
-            if(this.$store.dispatch("register", {name: this.name, email: this.email, password: this.password})) {
-                this.$router.push('/')
+          const result = await this.$store.dispatch("register", {name: this.name, email: this.email, password: this.password})
+            if(result) {
+                await this.$router.push('/')
             }
         }
     }
