@@ -28,5 +28,17 @@ export default {
         if (response.status === RESPONSE_STATUS_OK_200) {
             return response.data
         }
+    },
+    async login(user) {
+        const response = await axios.post(`${BASE_URL}/api/AuthManagement/Login`, user)
+        if (response.status === RESPONSE_STATUS_OK_200) {
+            return response.data
+        }
+    },
+    async register(user) {
+        const response = await axios.post(`${BASE_URL}/api/AuthManagement/Register`, user)
+        if (response.status === RESPONSE_STATUS_OK_200) {
+            return response.data
+        }
     }
 }

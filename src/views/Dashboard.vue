@@ -16,6 +16,14 @@ export default {
   components: {
     vHeader,
     vContainer
+  },
+  created() {
+    if(!this.$store.state.jwt) {
+      this.$router.push('/login')
+    }
+  },
+  mounted() {
+    document.title = "Todo App | Dashboard"
   }
 }
 </script>

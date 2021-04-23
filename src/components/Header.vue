@@ -12,9 +12,9 @@
         </nav>
       </div>
       <div class="exit">
-        <router-link to="/sign-out">
+        <a href="#" @click.prevent="signOut">
           Sing Out
-        </router-link>
+        </a>
       </div>
     </div>
   </header>
@@ -54,5 +54,12 @@ nav {
 </style>
 
 <script>
-
+export default {
+  methods: {
+    signOut() {
+      this.$store.commit('REMOVE_JWT')
+      this.$router.push('/login')
+    }
+  }
+}
 </script>

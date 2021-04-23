@@ -1,9 +1,11 @@
 import {createStore} from 'vuex'
 import api from "./api";
+import axios from "axios";
 
 export default createStore({
     state: {
-        todos: []
+        todos: [],
+        jwt: localStorage.getItem('jwt')
     },
     mutations: {
         SET_TODOS(state, data) {
@@ -18,6 +20,14 @@ export default createStore({
         UPDATE_TODO(state, itemTodo) {
             const updateTodo = state.todos.find(item => itemTodo.id === item.id)
             state.todos[updateTodo] = itemTodo
+        },
+        SET_JWT(state, jwt) {
+            state.jwt = jwt
+            localStorage.setItem("jwt", jwt)
+        },
+        REMOVE_JWT(state) {
+            state.jwt = null
+            localStorage.removeItem("jwt")
         }
     },
     getters: {
@@ -28,7 +38,7 @@ export default createStore({
     actions: {
         async fetchTodos({commit}) {
             const data = await api.fetchTodos()
-            await commit("SET_TODOS", data)
+            commit("SET_TODOS", data)
         },
         async removeTodo({commit}, idx) {
             const resp = await api.removeTodo(idx)
@@ -39,14 +49,32 @@ export default createStore({
         async createTodo({commit, dispatch}, item) {
             const data = await api.createTodo(item)
             if (data) {
-                await commit("CREATE_TODO", data)
+                commit("CREATE_TODO", data)
             }
         },
         async updateTodo({commit}, item) {
             const data = await api.updateTodo(item)
             if (data) {
-                await commit("UPDATE_TODO", item)
+                commit("UPDATE_TODO", item)
             }
+        },
+        async login({commit}, user) {
+            const data = await api.login(user)
+            if (data.token) {
+                commit("SET_JWT", data.token)
+                axios.defaults.headers["Authorization"] = "Bearer " + data.token
+                return true
+            }
+            return false
+        },
+        async register({commit}, user) {
+            const data = await api.register(user)
+            if (data.token) {
+                commit("SET_JWT", data.token)
+                axios.defaults.headers["Authorization"] = "Bearer " + data.token
+                return true
+            }
+            return false
         }
     },
     modules: {}

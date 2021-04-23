@@ -11,6 +11,14 @@ export default {
   components: {
     vHeader,
     vTaskList
+  },
+  created() {
+    if(!this.$store.state.jwt) {
+      this.$router.push('/login')
+    }
+  },
+  mounted() {
+    document.title = "Todo App | Home"
   }
 }
 </script>
